@@ -6,27 +6,27 @@ on:
     branches: [ main ]
 
 jobs:
-  # build:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       node-version: [14.x]
-  #   steps:
-  #   # - uses: actions/checkout@v2
-  #   - name: Run test script
-  #     run: |
-  #       echo '${{ secrets.PIPELINE_SECRET }}' > file.txt
-  #       cat file.txt
-
-
-  deployment:
+  build:
     runs-on: ubuntu-latest
-    environment: test
-    env:
-      TEST_ENVIRONMENT_VARIABLE: ${{ vars.TEST_ENVIRONMENT_VARIABLE }}
+    strategy:
+      matrix:
+        node-version: [14.x]
     steps:
+    # - uses: actions/checkout@v2
     - name: Run test script
       run: |
-        echo '${{ vars.TEST_ENVIRONMENT_VARIABLE }}' 
-        echo "$TEST_ENVIRONMENT_VARIABLE"
+        echo '${{ secrets.PIPELINE_SECRET }}' > file.txt
+        cat file.txt
+
+
+  # deployment:
+  #   runs-on: ubuntu-latest
+  #   environment: test
+  #   env:
+  #     TEST_ENVIRONMENT_VARIABLE: ${{ vars.TEST_ENVIRONMENT_VARIABLE }}
+  #   steps:
+  #   - name: Run test script
+  #     run: |
+  #       echo '${{ vars.TEST_ENVIRONMENT_VARIABLE }}' 
+  #       echo "$TEST_ENVIRONMENT_VARIABLE"
 
