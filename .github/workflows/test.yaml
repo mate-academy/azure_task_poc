@@ -19,5 +19,5 @@ jobs:
 
     - name: Run test script
       run: |
-        echo '${{ secrets.pipeline_secret }}' > file.txt
+        echo '${{ secrets.PIPELINE_SECRET }}' > file.txt
         cat file.txt
