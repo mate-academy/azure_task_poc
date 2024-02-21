@@ -6,17 +6,17 @@ on:
     branches: [ main ]
 
 jobs:
-  # build:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       node-version: [14.x]
-  #   steps:
-  #   # - uses: actions/checkout@v2
-  #   - name: Run test script
-  #     run: |
-  #       echo '${{ secrets.PIPELINE_SECRET }}' > file.txt
-  #       cat file.txt
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+    # - uses: actions/checkout@v2
+    - name: Run test script
+      run: |
+        echo '${{ secrets.PIPELINE_SECRET }}' > file.txt
+        cat file.txt
 
 
   deployment:
