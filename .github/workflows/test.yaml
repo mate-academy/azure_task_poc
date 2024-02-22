@@ -14,19 +14,17 @@ jobs:
     steps:
     # - uses: actions/checkout@v2
     - name: Run test script
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo '${{ secrets.PIPELINE_SECRET }}' > file.txt
-        cat file.txt
+        echo 'starting the validation'
 
+        echo 'commit sha:' 
+        git rev-parse --short HEAD
+        commitSHA=$(git rev-parse HEAD)
 
-  deployment:
-    runs-on: ubuntu-latest
-    environment: test
-    env:
-      TEST_ENVIRONMENT_VARIABLE: ${{ vars.TEST_ENVIRONMENT_VARIABLE }}
-    steps:
-    - name: Run test script
-      run: |
-        echo '${{ vars.TEST_ENVIRONMENT_VARIABLE }}' 
-        echo "$TEST_ENVIRONMENT_VARIABLE"
+        echo "listing all gh workflow runs"
+        gh run list 
 
+        echo "listing a specific gh workflow run"
+        gh run list --status completed --workflow Test --json status,name,headSha -c "$commitSHA"
