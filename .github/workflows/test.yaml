@@ -19,7 +19,7 @@ jobs:
       run: |
         echo 'starting the validation'
         
-        git history
+        echo 'git history: '
         git log -5
         
         echo 'commit sha:' 
