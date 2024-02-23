@@ -19,12 +19,15 @@ jobs:
       run: |
         echo 'starting the validation'
         
+        echo 'git repository:' 
+        gh repo view
+
         echo 'git history: '
         git log -5
-        
+
         echo 'commit sha:' 
-        git rev-parse --short HEAD
-        commitSHA=$(git rev-parse HEAD)
+        git rev-parse --short HEAD^1 
+        commitSHA=$(git rev-parse HEAD^1)
 
         echo "listing all gh workflow runs"
         gh run list 
