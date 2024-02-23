@@ -33,10 +33,12 @@ jobs:
         echo 'starting the validation'
         
         echo 'git repository: ${{ github.event.pull_request.head.repo.full_name }}' 
-      
-        gh repo set-default '${{ github.event.pull_request.head.repo.full_name }}'
 
-        gh run list 
+        gh repo list 
+
+        # gh repo set-default '${{ github.event.pull_request.head.repo.full_name }}'
+
+        # gh run list 
 
 
     # - name: Run test script
