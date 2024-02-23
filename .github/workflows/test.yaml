@@ -25,6 +25,19 @@ jobs:
       run: | 
         echo '${{ github.event.repository.name }}'
         echo 
+    
+    - name: Run test script
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo 'starting the validation'
+        
+        echo 'git repository: ${{ github.event.pull_request.head.repo.full_name }}' 
+      
+        gh repo set-default '${{ github.event.pull_request.head.repo.full_name }}'
+
+        gh run list 
+
 
     # - name: Run test script
     #   run: |
