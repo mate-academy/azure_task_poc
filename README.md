@@ -1,9 +1,5 @@
 # azure_task_poc
 
-test change 
-
-another test change
-
 git rev-parse --short HEAD
 gh workflow list
 gh workflow view Test
