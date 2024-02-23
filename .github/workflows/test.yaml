@@ -18,7 +18,10 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo 'starting the validation'
-
+        
+        git history
+        git log -5
+        
         echo 'commit sha:' 
         git rev-parse --short HEAD
         commitSHA=$(git rev-parse HEAD)
