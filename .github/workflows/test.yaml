@@ -6,39 +6,59 @@ on:
   pull_request_target:
     branches: [ main ]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x]
+jobs: 
+  validate-task:
+    runs-on: windows-latest
     steps:
+      - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
+        uses: azure/login@v1
+        with:
+          client-id: '320099b6-8088-4a89-a2b0-51ea9b8ce246'
+          tenant-id: '6c51c659-9d52-41af-81f7-dde16380e813'
+          subscription-id: '5e04d317-fc3d-4c85-86de-02c812c6a759'
+          enable-AzPSSession: true
 
-    - uses: actions/checkout@v4
+      - name: 'Get resource group with PowerShell action'
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            Get-AzResourceGroup
+          azPSVersion: "latest"
 
-    - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo "$GITHUB_CONTEXT"
+  # build:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       node-version: [14.x]
+  #   steps:
 
-    - name: Run test script
-      run: | 
-        echo '${{ github.event.repository.name }}'
-        echo 
+  #   - uses: actions/checkout@v4
+
+
+
+    # - name: Dump GitHub context
+    #   env:
+    #     GITHUB_CONTEXT: ${{ toJson(github) }}
+    #   run: echo "$GITHUB_CONTEXT"
+
+    # - name: Run test script
+    #   run: | 
+    #     echo '${{ github.event.repository.name }}'
+    #     echo 
     
-    - name: Run test script
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        echo 'starting the validation'
+    # - name: Run test script
+    #   env:
+    #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     echo 'starting the validation'
         
-        echo 'git repository: ${{ github.event.pull_request.head.repo.full_name }}' 
+    #     echo 'git repository: ${{ github.event.pull_request.head.repo.full_name }}' 
 
-        gh repo list 
+    #     gh repo list 
 
-        # gh repo set-default '${{ github.event.pull_request.head.repo.full_name }}'
+    #     # gh repo set-default '${{ github.event.pull_request.head.repo.full_name }}'
 
-        # gh run list 
+    #     # gh run list 
 
 
     # - name: Run test script
