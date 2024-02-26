@@ -42,16 +42,16 @@ jobs:
     - name: Debug step
       shell: pwsh
       run: | 
-        Write-Output "ClientID: ${ClientID}"
+        Write-Output "ClientID: ${{ env.ClientID }}"
         Write-Output "TenantID: $($env:TenantID)"
-        Write-Output "SubscriptionID: ${SubscriptionID}"
+        Write-Output "SubscriptionID: ${{ env.SubscriptionID }}"
 
     - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
       uses: azure/login@v1
       with:
-        client-id: '${ClientID}'
-        tenant-id: '${TenantID}'
-        subscription-id: '${SubscriptionID}'
+        client-id: '${{ env.ClientID }}'
+        tenant-id: '${{ env.TenantID }}'
+        subscription-id: '${{ env.SubscriptionID }}'
         enable-AzPSSession: true
 
     - name: 'Get resource group with PowerShell action'
