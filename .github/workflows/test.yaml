@@ -39,13 +39,6 @@ jobs:
             "SubscriptionID=$($config.SubscriptionID)" | Out-File -FilePath $env:GITHUB_ENV -Append
         }
 
-    - name: Debug step
-      shell: pwsh
-      run: | 
-        Write-Output "ClientID: ${{ env.ClientID }}"
-        Write-Output "TenantID: $($env:TenantID)"
-        Write-Output "SubscriptionID: ${{ env.SubscriptionID }}"
-
     - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
       uses: azure/login@v1
       with:
