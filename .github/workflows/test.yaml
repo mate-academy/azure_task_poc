@@ -39,7 +39,6 @@ jobs:
             "SubscriptionID=$($config.SubscriptionID)" | Out-File -FilePath $env:GITHUB_ENV -Append
         }
 
-
     - name: Debug step
       shell: pwsh
       run: | 
@@ -47,20 +46,20 @@ jobs:
         Write-Output "TenantID: $($env:TenantID)"
         Write-Output "SubscriptionID: ${SubscriptionID}"
 
-      - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
-        uses: azure/login@v1
-        with:
-          client-id: '${ClientID}'
-          tenant-id: '${TenantID}'
-          subscription-id: '${SubscriptionID}'
-          enable-AzPSSession: true
+    - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
+      uses: azure/login@v1
+      with:
+        client-id: '${ClientID}'
+        tenant-id: '${TenantID}'
+        subscription-id: '${SubscriptionID}'
+        enable-AzPSSession: true
 
-      - name: 'Get resource group with PowerShell action'
-        uses: azure/powershell@v1
-        with:
-          inlineScript: |
-            Get-AzResourceGroup
-          azPSVersion: "latest"
+    - name: 'Get resource group with PowerShell action'
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+          Get-AzResourceGroup
+        azPSVersion: "latest"
 
   # build:
   #   runs-on: ubuntu-latest
