@@ -14,12 +14,45 @@ jobs:
   validate-task:
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v4
+
+    - name: Read the config file
+      shell: pwsh
+      run: | 
+        $config = (Get-Content 'azure-config.json' | ConvertFrom-Json )
+
+        if (-not $config.ClientID) { 
+            Write-Error "ClientID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
+        } else { 
+            "ClientID=$($config.ClientID)" | Out-File -FilePath $env:GITHUB_ENV -Append
+        }
+
+        if (-not $config.TenantID) { 
+            Write-Error "TenantID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
+        } else { 
+            "TenantID=$($config.TenantID)" | Out-File -FilePath $env:GITHUB_ENV -Append
+        }
+
+        if (-not $config.SubscriptionID) { 
+            Write-Error "SubscriptionID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
+        } else { 
+            "SubscriptionID=$($config.SubscriptionID)" | Out-File -FilePath $env:GITHUB_ENV -Append
+        }
+
+
+    - name: Debug step
+      shell: pwsh
+      run: | 
+        Write-Output "ClientID: ${ClientID}"
+        Write-Output "TenantID: $($env:TenantID)"
+        Write-Output "SubscriptionID: ${SubscriptionID}"
+
       - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
         uses: azure/login@v1
         with:
-          client-id: '320099b6-8088-4a89-a2b0-51ea9b8ce246'
-          tenant-id: '6c51c659-9d52-41af-81f7-dde16380e813'
-          subscription-id: '5e04d317-fc3d-4c85-86de-02c812c6a759'
+          client-id: '${ClientID}'
+          tenant-id: '${TenantID}'
+          subscription-id: '${SubscriptionID}'
           enable-AzPSSession: true
 
       - name: 'Get resource group with PowerShell action'
