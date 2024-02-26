@@ -16,43 +16,43 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Read the config file
-      shell: pwsh
-      run: | 
-        $config = (Get-Content 'azure-config.json' | ConvertFrom-Json )
+    # - name: Read the config file
+    #   shell: pwsh
+    #   run: | 
+    #     $config = (Get-Content 'azure-config.json' | ConvertFrom-Json )
 
-        if (-not $config.ClientID) { 
-            Write-Error "ClientID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
-        } else { 
-            "ClientID=$($config.ClientID)" | Out-File -FilePath $env:GITHUB_ENV -Append
-        }
+    #     if (-not $config.ClientID) { 
+    #         Write-Error "ClientID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
+    #     } else { 
+    #         "ClientID=$($config.ClientID)" | Out-File -FilePath $env:GITHUB_ENV -Append
+    #     }
 
-        if (-not $config.TenantID) { 
-            Write-Error "TenantID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
-        } else { 
-            "TenantID=$($config.TenantID)" | Out-File -FilePath $env:GITHUB_ENV -Append
-        }
+    #     if (-not $config.TenantID) { 
+    #         Write-Error "TenantID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
+    #     } else { 
+    #         "TenantID=$($config.TenantID)" | Out-File -FilePath $env:GITHUB_ENV -Append
+    #     }
 
-        if (-not $config.SubscriptionID) { 
-            Write-Error "SubscriptionID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
-        } else { 
-            "SubscriptionID=$($config.SubscriptionID)" | Out-File -FilePath $env:GITHUB_ENV -Append
-        }
+    #     if (-not $config.SubscriptionID) { 
+    #         Write-Error "SubscriptionID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
+    #     } else { 
+    #         "SubscriptionID=$($config.SubscriptionID)" | Out-File -FilePath $env:GITHUB_ENV -Append
+    #     }
 
-    - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
-      uses: azure/login@v1
-      with:
-        client-id: '${{ env.ClientID }}'
-        tenant-id: '${{ env.TenantID }}'
-        subscription-id: '${{ env.SubscriptionID }}'
-        enable-AzPSSession: true
+    # - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
+    #   uses: azure/login@v1
+    #   with:
+    #     client-id: '${{ env.ClientID }}'
+    #     tenant-id: '${{ env.TenantID }}'
+    #     subscription-id: '${{ env.SubscriptionID }}'
+    #     enable-AzPSSession: true
 
-    - name: 'Get resource group with PowerShell action'
-      uses: azure/powershell@v1
-      with:
-        inlineScript: |
-          Get-AzResourceGroup
-        azPSVersion: "latest"
+    # - name: 'Get resource group with PowerShell action'
+    #   uses: azure/powershell@v1
+    #   with:
+    #     inlineScript: |
+    #       Get-AzResourceGroup
+    #     azPSVersion: "latest"
 
   # build:
   #   runs-on: ubuntu-latest
@@ -63,17 +63,16 @@ jobs:
 
   #   - uses: actions/checkout@v4
 
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
 
-
-    # - name: Dump GitHub context
-    #   env:
-    #     GITHUB_CONTEXT: ${{ toJson(github) }}
-    #   run: echo "$GITHUB_CONTEXT"
-
-    # - name: Run test script
-    #   run: | 
-    #     echo '${{ github.event.repository.name }}'
-    #     echo 
+    - name: Run test script
+      run: | 
+        echo 'current repository: ${{ github.event.repository.name }}'
+        echo 'pr repository: ${{ github.event.pull_request.head.repo.full_name }}' 
+        echo 'pr commit sha: ${{ github.event.pull_request.head.sha }}'
     
     # - name: Run test script
     #   env:
