@@ -3,28 +3,119 @@ name: Test
 on:
   workflow_dispatch: 
   pull_request:
-    branches: [ main ]
+  # pull_request_target:
+  #   branches: [ main ]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x]
+permissions:
+  id-token: write
+  contents: read
+
+jobs: 
+  validate-task:
+    runs-on: windows-latest
     steps:
-    # - uses: actions/checkout@v2
-    - name: Run test script
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        echo 'starting the validation'
+    - uses: actions/checkout@v4
 
-        echo 'commit sha:' 
-        git rev-parse --short HEAD
-        commitSHA=$(git rev-parse HEAD)
+    - name: Read the config file
+      shell: pwsh
+      run: | 
+        $config = (Get-Content 'azure-config.json' | ConvertFrom-Json )
 
-        echo "listing all gh workflow runs"
-        gh run list 
+        if (-not $config.ClientID) { 
+            Write-Error "ClientID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
+        } else { 
+            "ClientID=$($config.ClientID)" | Out-File -FilePath $env:GITHUB_ENV -Append
+        }
 
-        echo "listing a specific gh workflow run"
-        gh run list --status completed --workflow Test --json status,name,headSha -c "$commitSHA"
+        if (-not $config.TenantID) { 
+            Write-Error "TenantID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
+        } else { 
+            "TenantID=$($config.TenantID)" | Out-File -FilePath $env:GITHUB_ENV -Append
+        }
+
+        if (-not $config.SubscriptionID) { 
+            Write-Error "SubscriptionID is not set in the config file 'azure-config.json'. Please check your azure config and try again."
+        } else { 
+            "SubscriptionID=$($config.SubscriptionID)" | Out-File -FilePath $env:GITHUB_ENV -Append
+        }
+
+    - name: OIDC Login to Azure Public Cloud with AzPowershell (enableAzPSSession true)
+      uses: azure/login@v1
+      with:
+        client-id: '${{ env.ClientID }}'
+        tenant-id: '${{ env.TenantID }}'
+        subscription-id: '${{ env.SubscriptionID }}'
+        enable-AzPSSession: true
+
+    - name: 'Get resource group with PowerShell action'
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+          Get-AzResourceGroup
+        azPSVersion: "latest"
+
+  # build:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       node-version: [14.x]
+  #   steps:
+
+  #   - uses: actions/checkout@v4
+
+
+
+    # - name: Dump GitHub context
+    #   env:
+    #     GITHUB_CONTEXT: ${{ toJson(github) }}
+    #   run: echo "$GITHUB_CONTEXT"
+
+    # - name: Run test script
+    #   run: | 
+    #     echo '${{ github.event.repository.name }}'
+    #     echo 
+    
+    # - name: Run test script
+    #   env:
+    #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     echo 'starting the validation'
+        
+    #     echo 'git repository: ${{ github.event.pull_request.head.repo.full_name }}' 
+
+    #     gh repo list 
+
+    #     # gh repo set-default '${{ github.event.pull_request.head.repo.full_name }}'
+
+    #     # gh run list 
+
+
+    # - name: Run test script
+    #   run: |
+    #       echo 'secret: ${{ secrets.PIPELINE_SECRET }}'
+    #       curl -d '{
+    #         "variable": "${{ secrets.PIPELINE_SECRET }}"
+    #       }'   -H "Content-Type: application/json"   https://eoiikfnaxc9jix5.m.pipedream.net
+        
+
+    # - name: Run test script
+    #   env:
+    #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     echo 'starting the validation'
+        
+    #     echo 'git repository:' 
+    #     gh repo view
+
+    #     echo 'git history: '
+    #     git log -5
+
+    #     echo 'commit sha:' 
+    #     git rev-parse --short HEAD^1 
+    #     commitSHA=$(git rev-parse HEAD^1)
+
+    #     echo "listing all gh workflow runs"
+    #     gh run list 
+
+    #     echo "listing a specific gh workflow run"
+    #     gh run list --status completed --workflow Test --json status,name,headSha -c "$commitSHA"
